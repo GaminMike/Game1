@@ -11,7 +11,7 @@ function love.load()
   print(width, height)
   centerY = height/2
   centerX = width/2
-
+  jumpstrength = 12^4 
 
   ground = {}
   local shapeLength = 1000
@@ -55,6 +55,20 @@ function love.update(dt)
 
   love.keyboard.setKeyRepeat(true)
 
+  local gravity = "positive"
+  if player.b:getY() > centerY then
+    player.b:applyForce(0, -10*p.getMeter())
+    gravity = "negative"
+  elseif blocks[1].b:getY() > centerY then
+    blocks[1].b:applyForce(0, -10*p.getMeter())
+  elseif blocks[2].b:getY() > centerY then
+    blocks[2].b:applyForce(0, -10*p.getMeter())
+  else
+    gravity = "positive"
+  end
+
+-- Keyboard Block
+
   if k.isDown("up") or k.isDown("w") then
     player.b:applyForce(0, -300) 
   end
@@ -71,28 +85,21 @@ function love.update(dt)
     player.b:applyForce(300, 0)
 
   end
+
   love.keyboard.setKeyRepeat(false)
-  if k.isDown("space") then
-    if gravity == "positive" then
-    player.b:applyForce(0, -2000)
-    else
-    player.b:applyForce(0, 2000)
+  
+  function love.keyreleased(key)
+      if key == "space" then
+        if gravity == "positive" then
+          player.b:applyForce(0, -jumpstrength)
+          print("positive gravity")
+        elseif gravity == "negative" then
+          player.b:applyForce(0, jumpstrength)
+          print("negative gravity")
+      end
     end
   end
-
-  if player.b:getY() > centerY then
-    player.b:applyForce(0, -10*p.getMeter())
-  elseif blocks[1].b:getY() > centerY then
-    blocks[1].b:applyForce(0, -10*p.getMeter())
-  elseif blocks[2].b:getY() > centerY then
-    blocks[2].b:applyForce(0, -10*p.getMeter())
-  else
-    player.b:applyForce(0, 10*p.getMeter())
-    blocks[1].b:applyForce(0, 10*p.getMeter())
-    blocks[2].b:applyForce(0, 10*p.getMeter())
-  end
 end
-
 function love.draw()
   g.setColor(255, 0, 0)
   g.circle("fill", player.b:getX(), player.b:getY(), player.s:getRadius()) 
