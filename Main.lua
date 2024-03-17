@@ -4,12 +4,19 @@ k = love.keyboard
 
 function love.load()
   p.setMeter(100)
-  w = p.newWorld(0, 9.8*p.getMeter(), true) 
+  w = p.newWorld(0, 10*p.getMeter(), true) 
+  
+  window = {}
+  local width, height = love.graphics.getDimensions()
+  print(width, height)
+  centerY = height/2
+  centerX = width/2
+
 
   ground = {}
-
-  ground.b = p.newBody(w, 407, 421, "static")
-  ground.s = p.newRectangleShape(1000, 40)
+  local shapeLength = 1000
+  ground.b = p.newBody(w, centerX, centerY, "static")
+  ground.s = p.newRectangleShape(shapeLength, 2)
   ground.f = p.newFixture(ground.b, ground.s)
 
   blocks = {
@@ -38,11 +45,21 @@ function love.load()
 
   player.f = p.newFixture(player.b, player.s)
 
-  player.f:setRestitution(0.7)
+  player.f:setRestitution(0.5)
 end
 
 function love.update(dt)
   w:update(dt)
+  love.keyboard.setKeyRepeat(true)
+  local gravity = "positive"
+  local y = player.b:getY()
+  if y > centerY then
+    w:setGravity(0, -10*p.getMeter())
+    gravity = "negative"
+  elseif y <= centerY then
+    w:setGravity(0, 10*p.getMeter())
+    gravity = "positive"
+  end
 
   if k.isDown("up") or k.isDown("w") then
     player.b:applyForce(0, -300) 
@@ -58,10 +75,17 @@ function love.update(dt)
 
   if k.isDown("right") or k.isDown("d") then
     player.b:applyForce(300, 0)
+
   end
+  love.keyboard.setKeyRepeat(false)
   if k.isDown("space") then
+    if gravity == "positive" then
     player.b:applyForce(0, -2000)
+    else
+    player.b:applyForce(0, 2000)
+    end
   end
+
 end
 
 function love.draw()
