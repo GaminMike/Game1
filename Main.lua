@@ -29,6 +29,7 @@ function love.load()
   blocks[1].s = p.newRectangleShape(35, 75)
 
   blocks[1].f = p.newFixture(blocks[1].b, blocks[1].s) 
+  blocks[1].f:setRestitution(0.5)
 
 
   blocks[2].b = p.newBody(w, 264, 254, "dynamic") 
@@ -36,6 +37,7 @@ function love.load()
   blocks[2].s = p.newRectangleShape(35, 75)
 
   blocks[2].f = p.newFixture(blocks[2].b, blocks[2].s) 
+  blocks[2].f:setRestitution(0.5)
 
   player = {}
 
@@ -50,16 +52,8 @@ end
 
 function love.update(dt)
   w:update(dt)
+
   love.keyboard.setKeyRepeat(true)
-  local gravity = "positive"
-  local y = player.b:getY()
-  if y > centerY then
-    w:setGravity(0, -10*p.getMeter())
-    gravity = "negative"
-  elseif y <= centerY then
-    w:setGravity(0, 10*p.getMeter())
-    gravity = "positive"
-  end
 
   if k.isDown("up") or k.isDown("w") then
     player.b:applyForce(0, -300) 
@@ -86,6 +80,17 @@ function love.update(dt)
     end
   end
 
+  if player.b:getY() > centerY then
+    player.b:applyForce(0, -10*p.getMeter())
+  elseif blocks[1].b:getY() > centerY then
+    blocks[1].b:applyForce(0, -10*p.getMeter())
+  elseif blocks[2].b:getY() > centerY then
+    blocks[2].b:applyForce(0, -10*p.getMeter())
+  else
+    player.b:applyForce(0, 10*p.getMeter())
+    blocks[1].b:applyForce(0, 10*p.getMeter())
+    blocks[2].b:applyForce(0, 10*p.getMeter())
+  end
 end
 
 function love.draw()
