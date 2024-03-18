@@ -7,7 +7,7 @@ function love.load()
   w = p.newWorld(0, 10*p.getMeter(), true) 
   
   window = {}
-  local width, height = love.graphics.getDimensions()
+  local width, height = g.getDimensions()
   print(width, height)
   centerY = height/2
   centerX = width/2
@@ -73,20 +73,23 @@ function love.update(dt)
     player.b:applyForce(0, -300) 
   end
 
-  if k.isDown("down") or k.isDown("s") then
-    player.b:applyForce(0, 300)
+  if gravity == "negative" then
+    if k.isDown("down") or k.isDown("s") then
+      player.b:applyForce(0, 750)
+    end
+  else
+    if k.isDown("down") or k.isDown("s") then
+      player.b:applyForce(0, 300)
+    end
   end
 
   if k.isDown("left") or k.isDown("a") then
     player.b:applyForce(-300, 0)
   end
-
+  
   if k.isDown("right") or k.isDown("d") then
     player.b:applyForce(300, 0)
-
   end
-
-  love.keyboard.setKeyRepeat(false)
   
   function love.keyreleased(key)
       if key == "space" then
